@@ -1,0 +1,84 @@
+diff --git a/app/pom.xml b/app/pom.xml
+index c0002cc..2cac51f 100644
+--- a/app/pom.xml
++++ b/app/pom.xml
+@@ -14,8 +14,8 @@
+ 
+ 	<properties>
+ 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+-		<maven.compiler.source>11</maven.compiler.source>
+-		<maven.compiler.target>11</maven.compiler.target>
++		<maven.compiler.source>1.8</maven.compiler.source>
++		<maven.compiler.target>1.8</maven.compiler.target>
+ 	</properties>
+ 
+ 	<dependencies>
+diff --git a/app/src/main/java/xdman/XDMApp.java b/app/src/main/java/xdman/XDMApp.java
+index 5ea793f..a69e875 100644
+--- a/app/src/main/java/xdman/XDMApp.java
++++ b/app/src/main/java/xdman/XDMApp.java
+@@ -10,6 +10,7 @@ import java.io.InputStreamReader;
+ import java.io.OutputStreamWriter;
+ import java.net.PasswordAuthentication;
+ import java.nio.file.Paths;
++import java.nio.file.Path;
+ import java.nio.charset.Charset;
+ import java.text.SimpleDateFormat;
+ import java.util.ArrayList;
+@@ -437,11 +438,11 @@ public class XDMApp implements DownloadListener, DownloadWindowListener, Compara
+ 					}
+ 					folderPath = null;
+ 				} else {
+-					var path = Paths.get(file);
++					Path path = Paths.get(file);
+ 
+ 					fileName = path.getFileName().toString();
+ 
+-					var parentPath = path.getParent();
++					Path parentPath = path.getParent();
+ 					if (parentPath != null && parentPath.isAbsolute()) {
+ 						folderPath = parentPath.toString();
+ 					} else {
+@@ -449,7 +450,7 @@ public class XDMApp implements DownloadListener, DownloadWindowListener, Compara
+ 						if (Config.getInstance().isForceSingleFolder()) {
+ 							downloadFolderPath = Config.getInstance().getDownloadFolder();
+ 						} else {
+-							var category = XDMUtils.findCategory(file);
++							int category = XDMUtils.findCategory(file);
+ 							downloadFolderPath = XDMApp.getInstance().getFolder(category);
+ 						}
+ 
+diff --git a/app/src/main/java/xdman/monitoring/BrowserMonitor.java b/app/src/main/java/xdman/monitoring/BrowserMonitor.java
+index 375c657..0d64dd4 100644
+--- a/app/src/main/java/xdman/monitoring/BrowserMonitor.java
++++ b/app/src/main/java/xdman/monitoring/BrowserMonitor.java
+@@ -14,6 +14,7 @@ import java.nio.file.StandardOpenOption;
+ import java.util.ArrayList;
+ import java.util.EnumSet;
+ import java.util.List;
++import java.lang.Math;   
+ 
+ import xdman.Config;
+ import xdman.XDMApp;
+@@ -183,7 +184,7 @@ public class BrowserMonitor implements Runnable {
+ 		ServerSocket serverSock = null;
+ 		try {
+ 			serverSock = new ServerSocket();
+-			serverSock.bind(new InetSocketAddress(InetAddress.getLoopbackAddress(), 9614));
++			serverSock.bind(new InetSocketAddress(InetAddress.getLoopbackAddress(), 9614 + (int)(Math.random()*100))); //random the port to be able to run multiple instaces
+ 			XDMApp.instanceStarted();
+ 			acquireGlobalLock();
+ 			while (true) {
+diff --git a/app/src/main/java/xdman/monitoring/MonitoringSession.java b/app/src/main/java/xdman/monitoring/MonitoringSession.java
+index 2ba8a37..ef63ab8 100644
+--- a/app/src/main/java/xdman/monitoring/MonitoringSession.java
++++ b/app/src/main/java/xdman/monitoring/MonitoringSession.java
+@@ -191,7 +191,7 @@ public class MonitoringSession implements Runnable {
+ 			}
+ 
+ 			if (url != null) {
+-				var metadata = new HttpMetadata();
++				HttpMetadata metadata = new HttpMetadata();
+ 				metadata.setUrl(url);
+ 
+ 				String file;

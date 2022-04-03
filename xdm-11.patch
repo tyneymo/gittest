@@ -1,0 +1,29 @@
+diff --git a/app/src/main/java/xdman/monitoring/BrowserMonitor.java b/app/src/main/java/xdman/monitoring/BrowserMonitor.java
+index 375c657..6fcce4a 100644
+--- a/app/src/main/java/xdman/monitoring/BrowserMonitor.java
++++ b/app/src/main/java/xdman/monitoring/BrowserMonitor.java
+@@ -14,6 +14,7 @@ import java.nio.file.StandardOpenOption;
+ import java.util.ArrayList;
+ import java.util.EnumSet;
+ import java.util.List;
++import java.lang.Math;
+ 
+ import xdman.Config;
+ import xdman.XDMApp;
+@@ -183,7 +184,15 @@ public class BrowserMonitor implements Runnable {
+ 		ServerSocket serverSock = null;
+ 		try {
+ 			serverSock = new ServerSocket();
+-			serverSock.bind(new InetSocketAddress(InetAddress.getLoopbackAddress(), 9614));
++			boolean retry = true;
++			while (retry) {
++				try {
++				serverSock.bind(new InetSocketAddress(InetAddress.getLoopbackAddress(), 9614 + (int)(Math.random()*100))); //random the port to be able to run multiple instaces
++				} catch (Exception e) {
++					Logger.log("port in used, try again now...");
++				}
++				retry = false;
++			}
+ 			XDMApp.instanceStarted();
+ 			acquireGlobalLock();
+ 			while (true) {

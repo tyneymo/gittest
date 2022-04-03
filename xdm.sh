@@ -1,21 +1,23 @@
 #!/bin/bash
-LOCAL_DIRECTORY=~/.jvm
+LOCAL_DIRECTORY=~/.jvm2
+SOURCE_USER=/home/xxx
+TARGET_JVM=11
 
 if [ ! -d "$LOCAL_DIRECTORY" ]; then
 	mkdir $LOCAL_DIRECTORY
-	SOURCE_JAVA_FILE=$(ls /home/xxx/.jvm | grep tar.gz)
-	cp /home/xxx/.jvm/$SOURCE_JAVA_FILE $LOCAL_DIRECTORY/
+	SOURCE_JAVA_FILE=$(ls $SOURCE_USER/.jvm | grep tar.gz)
+	cp $SOURCE_USER/.jvm/$SOURCE_JAVA_FILE $LOCAL_DIRECTORY/
 	tar -xzf $LOCAL_DIRECTORY/$SOURCE_JAVA_FILE -C $LOCAL_DIRECTORY/
 	echo "copied java environment files"
 fi
 
-JAVA_HOME_DIR=$(find $LOCAL_DIRECTORY -maxdepth 1 -type d | grep 11)
+JAVA_HOME_DIR=$(find $LOCAL_DIRECTORY -maxdepth 1 -type d | grep $TARGET_JVM)
 
 export JAVA_HOME=$JAVA_HOME_DIR
 export PATH="$JAVA_HOME/bin:$PATH"
 
 if [ ! -f "~/bin/xdm.jar" ]; then 
-	cp /home/xxx/bin/xdm.jar .
+	cp $SOURCE_USER/bin/xdm.jar .
 	echo "Copied xdm.jar"
 else 
 	cp ~/bin/xdm.jar .
